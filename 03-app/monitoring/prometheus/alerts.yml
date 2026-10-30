@@ -1,0 +1,30 @@
+groups:
+  - name: hello-app
+    rules:
+      - alert: HelloAppDown
+        expr: up{job="hello-app"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "hello-app недоступен"
+          description: "Prometheus не может собрать метрики с {{ $labels.instance }} дольше 30 секунд."
+
+      - alert: HelloAppHealthFailing
+        expr: sum(increase(http_requests_total{job="hello-app", handler="/health", status="5xx"}[2m])) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "/health отвечает ошибкой"
+          description: "Приложение не может пропинговать 77.88.8.8 (нет выхода во внешнюю сеть)."
+
+      - alert: HelloAppHighErrorRate
+        expr: |
+          sum(rate(http_requests_total{job="hello-app", status="5xx"}[5m]))
+            / clamp_min(sum(rate(http_requests_total{job="hello-app"}[5m])), 1e-9) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Больше 10% ответов hello-app с ошибкой 5xx"

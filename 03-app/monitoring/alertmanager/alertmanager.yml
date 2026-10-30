@@ -1,0 +1,18 @@
+route:
+  receiver: default
+  group_by: ["alertname"]
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 1h
+  routes:
+    - matchers: ['severity="critical"']
+      receiver: default
+      repeat_interval: 15m
+
+receivers:
+  - name: default
+
+inhibit_rules:
+  - source_matchers: ['alertname="HelloAppDown"']
+    target_matchers: ['alertname=~"HelloAppHealthFailing|HelloAppHighErrorRate"']
+    equal: ["job"]

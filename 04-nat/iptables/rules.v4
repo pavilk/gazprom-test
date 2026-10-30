@@ -1,0 +1,4 @@
+*nat
+-A POSTROUTING -s 10.0.2.0/24 -o eth0 -j MASQUERADE
+-A PREROUTING -i eth0 -p tcp --dport 8000 -j DNAT --to-destination 10.0.2.20:8000
+COMMIT

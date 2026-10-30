@@ -1,0 +1,42 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPAllowedUsers
+metadata:
+  name: hello-app-non-root
+spec:
+  match:
+    namespaces: ["hello-app"]
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    runAsUser:
+      rule: MustRunAsNonRoot
+    exemptImages: ["docker.io/istio/proxyv2:*"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPReadOnlyRootFilesystem
+metadata:
+  name: hello-app-read-only-fs
+spec:
+  match:
+    namespaces: ["hello-app"]
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    exemptImages: ["docker.io/istio/proxyv2:*"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sContainerLimits
+metadata:
+  name: hello-app-limits
+spec:
+  match:
+    namespaces: ["hello-app"]
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    cpu: "1"
+    memory: 512Mi
+    exemptImages: ["docker.io/istio/proxyv2:*"]

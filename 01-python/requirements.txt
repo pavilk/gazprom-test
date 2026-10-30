@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+pyjwt
+pandas
+pwdlib[argon2]
